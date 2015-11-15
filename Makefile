@@ -1,4 +1,4 @@
-.PHONY: build generate test get clean
+.PHONY: build generate test get install clean
 
 all: get gen-client-secret build
 
@@ -15,6 +15,8 @@ get:
 
 test:
 
+install: get gen-client-secret
+	go install
 
 clean:
 	-rm check-gdrive check-gdrive.exe bindata.go
