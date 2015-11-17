@@ -47,10 +47,38 @@ func diffFile(gFile *gdrive.File, lFile *local.File) (bool, error) {
 	return md5Checksum == gFile.Md5Checksum, nil
 }
 
-func traverse(gFolder *gdrive.File, lFolder *local.File) error {
-	gFiles, err := gFolder.GetFiles()
-	if err != nil {
+func askRetry(err error) error {
+	if err == nil {
 		return err
+	}
+
+	fmt.Fprintf(os.Stderr, "[Error] %v\nDo you want to retry? [Y/n]: ", err)
+	var answer string
+	if _, err := fmt.Scan(&answer); err != nil {
+		return err
+	}
+
+	if answer == "n" || answer == "N" {
+		return err
+	}
+
+	return nil
+}
+
+func traverse(gFolder *gdrive.File, lFolder *local.File) error {
+	var gFiles []*gdrive.File
+	var err error
+
+	for {
+		gFiles, err = gFolder.GetFiles()
+		if err != nil {
+			err = askRetry(err)
+			if err != nil {
+				return err
+			}
+		} else {
+			break
+		}
 	}
 
 	lFiles, err := lFolder.GetFiles()
