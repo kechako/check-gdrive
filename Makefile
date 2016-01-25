@@ -10,7 +10,7 @@ gen-client-secret:
 
 get:
 	go get -u github.com/jteeuwen/go-bindata/...
-	go get -u google.golang.org/api/drive/v2
+	go get -u google.golang.org/api/drive/v3
 	go get -u golang.org/x/oauth2/...
 
 test:

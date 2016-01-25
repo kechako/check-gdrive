@@ -14,7 +14,7 @@ func makeGDriveNameMap(files []*gdrive.File) map[string]*gdrive.File {
 	nameMap := make(map[string]*gdrive.File)
 
 	for _, file := range files {
-		nameMap[file.Title] = file
+		nameMap[file.Name] = file
 	}
 
 	return nameMap
@@ -111,9 +111,9 @@ func traverse(gFolder *gdrive.File, lFolder *local.File) error {
 		}
 	}
 	for _, gFile := range gFiles {
-		_, ok := lMap[gFile.Title]
+		_, ok := lMap[gFile.Name]
 		if !ok {
-			fmt.Printf(" -:%s:%s\n", gFile.Path, lFolder.Join(gFile.Title))
+			fmt.Printf(" -:%s:%s\n", gFile.Path, lFolder.Join(gFile.Name))
 		}
 	}
 

@@ -3,7 +3,7 @@ package gdrive
 import (
 	"fmt"
 
-	drive "google.golang.org/api/drive/v2"
+	drive "google.golang.org/api/drive/v3"
 )
 
 type File struct {
@@ -22,7 +22,7 @@ func (f *File) IsFile() bool {
 
 func (f *File) GetFiles() ([]*File, error) {
 	if !f.IsFolder() {
-		return nil, fmt.Errorf("%s (%s) is not a folder.", f.Title, f.Id)
+		return nil, fmt.Errorf("%s (%s) is not a folder.", f.Name, f.Id)
 	}
 
 	query := fmt.Sprintf("'%s' in parents and trashed = false", f.Id)
@@ -30,7 +30,7 @@ func (f *File) GetFiles() ([]*File, error) {
 	files := make([]*File, 0, 20)
 	pageToken := ""
 	for {
-		req := f.g.service.Files.List().Q(query).OrderBy("title")
+		req := f.g.service.Files.List().Q(query).Fields("files(id,md5Checksum,mimeType,name),nextPageToken").OrderBy("name")
 		if pageToken != "" {
 			req.PageToken(pageToken)
 		}
@@ -39,12 +39,12 @@ func (f *File) GetFiles() ([]*File, error) {
 			return nil, err
 		}
 
-		if len(r.Items) > 0 {
-			for _, i := range r.Items {
+		if len(r.Files) > 0 {
+			for _, i := range r.Files {
 				file := &File{
 					File: *i,
 					g:    f.g,
-					Path: f.Join(i.Title),
+					Path: f.Join(i.Name),
 				}
 				files = append(files, file)
 			}

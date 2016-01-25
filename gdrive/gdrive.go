@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	drive "google.golang.org/api/drive/v2"
+	drive "google.golang.org/api/drive/v3"
 )
 
 type GDrive struct {
